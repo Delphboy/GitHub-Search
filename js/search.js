@@ -1,44 +1,63 @@
 var ajaxLoad = new AJAXConnection();
+var JSONCache = null;
 var outputArea = null;
 
-function search(queryString)
+function setJSON()
+{
+    if(ajaxLoad.xmlHTTP.readyState === 4 && ajaxLoad.xmlHTTP.status === 200)
+    {
+        if(ajaxLoad.xmlHTTP.responseText !== "")
+        {
+            JSONCache = JSON.parse(ajaxLoad.xmlHTTP.responseText);            
+        }
+        else
+        {
+            JSONCache = null;
+        }
+    }
+}
+
+function search()
+{
+    outputArea = document.getElementById("results");
+    outputArea.innerHTML = "";
+    var queryString = document.getElementById("searchBar").value;
+    var output = "";
+    if(JSONCache !== null)
+    {
+        for(var i in JSONCache)
+        {
+            var name = JSONCache[i].name;
+            var description = JSONCache[i].description;
+            var link = JSONCache[i].html_url;
+
+            if(name.includes(queryString))
+                output += buildDisplayDiv(name, description, link);
+        }
+        if(output == "")
+            outputArea.innerHTML = output;
+        else
+            outputArea.innerHTML += output;
+    }
+    else updateCache();
+}
+
+function buildDisplayDiv(name, desc, url)
+{
+    var displayDiv = "<div style='border: solid'>"
+        + "<h3><a href='" + url + "'>" + name + "<a></h3>"
+        + "<p>" + desc + "</p>"
+        + "</div>"
+        + "<div style='padding: 1%'></div>";
+    return displayDiv;
+}
+
+function updateCache()
 {
     /* 
         curl -i https://api.github.com/orgs/mozilla/repos
         curl -i https://api.github.com/orgs/carfinance247/repos
         https://developer.github.com/v3/guides/getting-started/
     */
-    ajaxLoad.process("GET", "https://api.github.com/orgs/" + queryString, buildOutput);
-    outputArea = document.getElementById("results");
-}
-
-function buildOutput()
-{
-    var output = "";
-    if(ajaxLoad.xmlHTTP.readyState === 4 && ajaxLoad.xmlHTTP.status === 200)
-    {
-        if(ajaxLoad.xmlHTTP.responseText !== "")
-        {
-            // console.log(ajaxLoad.xmlHTTP.responseText);
-            var JSONResult = JSON.parse(ajaxLoad.xmlHTTP.responseText);
-            console.log(JSONResult);
-
-            for(var i in JSONResult)
-            {
-                var name = JSONResult[i].name;
-                var description = JSONResult[i].description;
-                output = "<p>" + name + ": " + description + "</p>";
-                if(output == "")
-                outputArea.innerHTML = output;
-            else
-                outputArea.innerHTML += output;
-            }
-            
-            
-        }
-        else
-        {
-            outputArea.innerHTML = "<h4>No More Adverts</h4>";
-        }
-    }
+   ajaxLoad.process("GET", "https://api.github.com/orgs/mozilla/repos", setJSON);
 }
