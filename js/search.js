@@ -1,20 +1,19 @@
-var ajaxLoad = new AJAXConnection();
-var JSONCache = null;
-var outputArea = null;
+/* 
+        curl -i https://api.github.com/orgs/mozilla/repos
+        curl -i https://api.github.com/orgs/carfinance247/repos
+        https://developer.github.com/v3/guides/getting-started/
+*/
 
-function setJSON()
+
+
+
+var JSONCache = updateCache();
+var outputArea = null;
+var userSettings = AJAXConnection("GET", "../settings.json");;
+
+function updateCache()
 {
-    if(ajaxLoad.xmlHTTP.readyState === 4 && ajaxLoad.xmlHTTP.status === 200)
-    {
-        if(ajaxLoad.xmlHTTP.responseText !== "")
-        {
-            JSONCache = JSON.parse(ajaxLoad.xmlHTTP.responseText);            
-        }
-        else
-        {
-            JSONCache = null;
-        }
-    }
+    JSONCache = AJAXConnection("GET", "https://api.github.com/orgs/mozilla/repos");
 }
 
 function search()
@@ -30,6 +29,7 @@ function search()
             var name = JSONCache[i].name;
             var description = JSONCache[i].description;
             var link = JSONCache[i].html_url;
+            var cloneLink = JSONCache[i].clone_url; //replace with .ssh_url if cloning via SSH not HTTP
 
             if(name.includes(queryString))
                 output += buildDisplayDiv(name, description, link);
@@ -55,12 +55,9 @@ function buildDisplayDiv(name, desc, url)
     return displayDiv;
 }
 
-function updateCache()
+function displayUserSettings()
 {
-    /* 
-        curl -i https://api.github.com/orgs/mozilla/repos
-        curl -i https://api.github.com/orgs/carfinance247/repos
-        https://developer.github.com/v3/guides/getting-started/
-    */
-   ajaxLoad.process("GET", "https://api.github.com/orgs/mozilla/repos", setJSON);
+    alert(userSettings.authKey + "\n"
+    + userSettings.cloneDir + "\n"
+    + userSettings.cloneType + "\n");
 }

@@ -1,17 +1,17 @@
-class AJAXConnection
+var obj = {};
+function AJAXConnection(type, url)
 {
-    constructor()
-    {
-        this.xmlHTTP = new XMLHttpRequest();
-    }
+    var xhr = new XMLHttpRequest();
 
-    process(method, url, stateChangeMethod)
+    xhr.open(type, url, true);
+    xhr.onreadystatechange = function()
     {
-        if(this.xmlHTTP.readyState === 0 || this.xmlHTTP.readyState === 4)
-        {
-            this.xmlHTTP.open(method, url, true);
-            this.xmlHTTP.onreadystatechange = stateChangeMethod;
-            this.xmlHTTP.send(null);
-        }
-    }
+        if(xhr.readyState === 4 && xhr.status === 200)
+            obj = xhr.responseText;
+        else
+            console.log("nope");
+    };
+    xhr.send(null);
+    
+    return obj;
 }
