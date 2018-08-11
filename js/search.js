@@ -39,7 +39,10 @@ function search()
         else
             outputArea.innerHTML += output;
     }
-    else updateCache();
+    else 
+    {
+        outputArea.innerHTML = "<p>Please update the cache</p>";
+    }
 }
 
 function buildDisplayDiv(name, desc, url)
