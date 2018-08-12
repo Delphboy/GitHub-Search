@@ -8,12 +8,15 @@
 
 
 var JSONCache = updateCache();
+var searchCache = JSONCache;
 var outputArea = null;
 var userSettings = AJAXConnection("GET", "../settings.json");;
 
 function updateCache()
 {
     JSONCache = AJAXConnection("GET", "https://api.github.com/orgs/mozilla/repos");
+    searchCache = JSONCache;
+    return JSONCache;
 }
 
 function search()
@@ -24,6 +27,7 @@ function search()
     var output = "";
     if(JSONCache !== null)
     {
+        console.log(JSONCache);
         for(var i in JSONCache)
         {
             var name = JSONCache[i].name;

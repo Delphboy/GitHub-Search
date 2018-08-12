@@ -9,8 +9,8 @@
 <body>
     <h1>Search GitHub for a repository</h1>
     <div id="search">
-        <input id="searchBar" type="text" value="mozilla/repos"/>
-        <button onclick="search()">Search</button>
+        <input id="searchBar" type="text" onkeydown="search()" value="mozilla/repos"/>
+        <!-- <button onclick="search()">Search</button> -->
         <button onclick="updateCache()">Update JSON Cache</button>
         <button onclick="displayUserSettings()">Display User Settings</button>
     </div>
